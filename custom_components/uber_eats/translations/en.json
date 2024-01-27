@@ -1,0 +1,33 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Uber Eats is already configured"
+        },
+        "error": {
+            "connection_error": "Can't connect to Uber Eats.",
+            "unknown": "Unexpected error"
+        },
+        "flow_title": "Uber Eats: {name}",
+        "step": {
+            "user": {
+                "data": {
+                    "account": "Account",
+                    "cookie": "Cookie",
+                    "localcode": "Local Code"
+                },
+                "description": "Please enter connection settings of your Uber Eats."
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Uber Eats",
+                "data": {
+                    "cookie": "Cookie",
+                    "localcode": "Local Code"
+                }
+            }
+        }
+    }
+}

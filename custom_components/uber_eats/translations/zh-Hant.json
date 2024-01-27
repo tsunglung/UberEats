@@ -1,0 +1,32 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Uber Eats \u5df2\u7d93\u8a2d\u5b9a"
+        },
+        "error": {
+            "connection_error": "\u7121\u6cd5\u9023\u63a5 Uber Eats."
+        },
+        "flow_title": "Uber Eats: {name}",
+        "step": {
+            "user": {
+                "data": {
+                    "account": "\u5e33\u865f",
+                    "cookie": "Cookie",
+                    "localcode": "\u570b\u5bb6/\u5730\u5340\u78bc"
+                },
+                "description": "\u8acb\u8f38\u5165\u4f60\u7684 Uber Eats \u9023\u7dda\u8cc7\u8a0a."
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Uber Eats ",
+                "data": {
+                    "cookie": "Cookie",
+                    "localcode": "\u570b\u5bb6/\u5730\u5340\u78bc"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "domain": "uber_eats",
+    "name": "Uber Eats",
+    "version": "0.1.0",
+    "documentation": "https://github.com/tsunglung/ubereats",
+    "issue_tracker": "https://github.com/tsunglung/ubereats/issues",
+    "config_flow": true,
+    "dependencies": [],
+    "codeowners": [
+        "@tsunglung"
+    ],
+    "requirements": [ "requests" ]
+}

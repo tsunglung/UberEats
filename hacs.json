@@ -1,0 +1,8 @@
+{
+    "name": "Uber Eats",
+    "render_readme": true,
+    "domain": "uber_eats",
+    "documentation": "https://github.com/tsunglung/UberEats",
+    "issue_tracker": "https://github.com/tsunglung/UberEats/issues",
+    "homeassistant": "2024.1.0"
+}
