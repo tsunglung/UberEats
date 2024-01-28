@@ -68,7 +68,7 @@ class UberEatsData():
         force_update = False
         now = datetime.now()
 
-        if (int(now.timestamp() - self._last_check.timestamp()) > 960):
+        if (int(now.timestamp() - self._last_check.timestamp()) > 300):
             force_update = True
             self._last_check = now
 

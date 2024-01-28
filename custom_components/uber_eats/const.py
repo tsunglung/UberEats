@@ -3,12 +3,13 @@ from datetime import timedelta
 
 DEFAULT_NAME = "Uber Eats"
 DOMAIN = "uber_eats"
-PLATFORMS = [ "binary_sensor", "button", "sensor" ]
+PLATFORMS = [ "binary_sensor", "button", "image", "sensor" ]
 DATA_KEY = "data_uber_eats"
 
 ATTR_ETA = "eta"
 ATTR_RESTAURANT_NAME = "restaurant_name"
 ATTR_COURIER_NAME = "courier_name"
+ATTR_COURIER_PHONE = "courier_phone"
 ATTR_COURIER_DESCRIPTION = "courier_description"
 ATTR_TITLE_SUMMARY = "title_summary"
 ATTR_SUBTITLE_SUMMARY = "subtitle_summary"

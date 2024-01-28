@@ -15,6 +15,7 @@ from .const import (
     ATTR_ETA,
     ATTR_RESTAURANT_NAME,
     ATTR_COURIER_NAME,
+    ATTR_COURIER_PHONE,
     ATTR_COURIER_DESCRIPTION,
     ATTR_TITLE_SUMMARY,
     ATTR_SUBTITLE_SUMMARY,
@@ -146,7 +147,9 @@ class UberEatsSensor(SensorEntity):
 
                     self._attr_value[ATTR_RESTAURANT_NAME] = self._attr_value[ATTR_RESTAURANT_NAME] + " " + order['activeOrderOverview']['title']
                     for contact in order.get("contacts", []):
-                        self._attr_value[ATTR_COURIER_NAME] = self._attr_value[ATTR_COURIER_NAME] + " " + contact['title']
+                        if contact['type'] == 'COURIER':
+                            self._attr_value[ATTR_COURIER_NAME] = self._attr_value[ATTR_COURIER_NAME] + " " + contact['title']
+                            self._attr_value[ATTR_COURIER_PHONE] = self._attr_value[ATTR_COURIER_PHONE] + " " + contact['phoneNumber']
                     for bgfeedcard in order.get("backgroundFeedCards", []):
                         self._attr_value[ATTR_LATITUDE] = self._attr_value[ATTR_LATITUDE] + " " + str(bgfeedcard['mapEntity'][0]['latitude'])
                         self._attr_value[ATTR_LONGITUDE] = self._attr_value[ATTR_LONGITUDE] + " " + str(bgfeedcard['mapEntity'][0]['longitude'])

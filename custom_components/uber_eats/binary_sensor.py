@@ -4,7 +4,6 @@ import logging
 from homeassistant.components.binary_sensor import BinarySensorEntity
 
 from .const import (
-    BASE_URL,
     CONF_ACCOUNT,
     DEFAULT_NAME,
     DOMAIN,
@@ -41,7 +40,6 @@ class UberEatsBinarySensor(BinarySensorEntity):
         self._data = data
         self._https_result = None
         self.hass = hass
-        self.uri = BASE_URL
 
     @property
     def unique_id(self):
