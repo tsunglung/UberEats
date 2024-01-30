@@ -6,6 +6,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
     CONF_ACCOUNT,
@@ -37,7 +38,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         hass.config_entries.async_update_entry(config_entry, data={},
                                                options=config_entry.data)
 
-    uber_eats_data = UberEatsData(hass, account, cookie, localcode)
+    session = async_get_clientsession(hass)
+
+    uber_eats_data = UberEatsData(hass, session, account, cookie, localcode)
 
     anws_aoaws_coordinator = DataUpdateCoordinator(
         hass,

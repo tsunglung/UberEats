@@ -13,6 +13,8 @@ from homeassistant.config_entries import (
 from homeassistant.const import CONF_NAME
 from homeassistant.core import callback
 from homeassistant.helpers.typing import ConfigType
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
 from .const import (
     DOMAIN,
     CONF_ACCOUNT,
@@ -34,8 +36,9 @@ async def validate_input(hass: core.HomeAssistant, data):
     account = data[CONF_ACCOUNT]
     cookie = data[CONF_COOKIE]
     localcode = data[CONF_LOCALCODE]
+    session = async_get_clientsession(hass)
 
-    uber_eats_data = UberEatsData(hass, account, cookie, localcode)
+    uber_eats_data = UberEatsData(hass, session, account, cookie, localcode)
     uber_eats_data.expired = False
     uber_eats_data.ordered = True
     await uber_eats_data.async_update_data()

@@ -21,9 +21,10 @@ _LOGGER = logging.getLogger(__name__)
 class UberEatsData():
     """Class for handling the data retrieval."""
 
-    def __init__(self, hass, account, cookie, localcode):
+    def __init__(self, hass, session, account, cookie, localcode):
         """Initialize the data object."""
         self._hass = hass
+        self._session = session
         self._account = account
         self._cookie = cookie
         self._localcode = localcode
@@ -36,21 +37,15 @@ class UberEatsData():
         self.orders[account] = {}
         self._last_check = datetime.now()
 
-    async def async_update_data(self):
-        """Async wrapper for getting the update."""
-        return await self._hass.async_add_executor_job(self._update_data)
- 
-    def get_uber_eats_data(self, site, data):
-        """ return data """
-        return self._update_data()
-
     def _parser_data(self, orders):
         """ parser data """
-        data = orders['orders']
+        data = []
+        if isinstance(orders, dict):
+            data = orders.get('orders', [])
 
         return data
 
-    def _update_data(self, **kwargs):
+    async def async_update_data(self):
         """Get the latest data for Uber Eats from REST service."""
         headers = {
             USER_AGENT: HA_USER_AGENT,
@@ -74,20 +69,26 @@ class UberEatsData():
 
         if not self.expired and (self.ordered or force_update):
             try:
-                response = requests.post(
-                    self.uri,
-                    headers=headers,
+                response = await self._session.request(
+                    "POST",
+                    url=self.uri,
                     data=json.dumps(payload),
                     params=params,
-                    timeout=REQUEST_TIMEOUT)
+                    headers=headers,
+                    timeout=REQUEST_TIMEOUT
+                )
 
             except requests.exceptions.RequestException:
                 _LOGGER.error("Failed fetching data for %s", self._account)
                 return
 
-            if response.status_code == HTTPStatus.OK:
+            if response.status == HTTPStatus.OK:
+                try:
+                    res = await response.json()
+                except:
+                    res = {"data": response.text}
                 self.orders[self._account][UBER_EATS_ORDERS] = self._parser_data(
-                    response.json().get('data', {})
+                    res.get('data', {})
                 )
                 if len(self.orders[self._account]) >= 1:
                     self.orders[self._account][ATTR_HTTPS_RESULT] = HTTPStatus.OK
@@ -100,18 +101,18 @@ class UberEatsData():
                     self.new_order = False
                     self.ordered = False
                 self.account = self._account
-            elif response.status_code == HTTPStatus.NOT_FOUND:
+            elif response.status == HTTPStatus.NOT_FOUND:
                 self.orders[self._account][ATTR_HTTPS_RESULT] = HTTPStatus.NOT_FOUND
                 self.expired = True
             else:
                 info = ""
-                self.orders[self._account][ATTR_HTTPS_RESULT] = response.status_code
-                if response.status_code == HTTPStatus.FORBIDDEN:
+                self.orders[self._account][ATTR_HTTPS_RESULT] = response.status
+                if response.status == HTTPStatus.FORBIDDEN:
                     info = " Token or Cookie is expired"
                 _LOGGER.error(
-                    "Failed fetching data for %s (HTTP Status_code = %d).%s",
+                    "Failed fetching data for %s (HTTP Status = %d).%s",
                     self._account,
-                    response.status_code,
+                    response.status,
                     info
                 )
                 self.expired = True
