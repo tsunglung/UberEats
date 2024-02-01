@@ -133,6 +133,7 @@ class OptionsFlowHandler(OptionsFlow):
         """Manage the options."""
         errors = {}
         if user_input is not None:
+            user_input[CONF_ACCOUNT] = self._account
             try:
                 info = await validate_input(self.hass, user_input)
             except CannotConnect:
