@@ -99,9 +99,10 @@ class UberEatsSensor(SensorEntity):
     @property
     def extra_state_attributes(self):
         """Return extra attributes."""
+        self._attributes = {}
         self._attributes[ATTR_ATTRIBUTION] = ATTRIBUTION
-        for i in ATTR_LIST:
-            self._attributes[i] = self._attr_value[i]
+        for k, _ in self._attr_value.items():
+            self._attributes[k] = self._attr_value[k]
         return self._attributes
 
     @property
@@ -134,26 +135,48 @@ class UberEatsSensor(SensorEntity):
             if self._account in self._data.orders:
                 orders = self._data.orders[self._account].get(UBER_EATS_ORDERS, [])
                 self._state = len(orders)
+                index = 0
                 if len(orders) >= 1:
-                    orders = self._data.orders[self._account]['orders']
                     for order in orders:
-                        for feed in order.get("feedCards", []):
-                            if feed['type'] == 'status':
-                                self._attr_value[ATTR_ETA] = self._attr_value[ATTR_ETA] + " " + feed['status']['title']
-                                self._attr_value[ATTR_TITLE_SUMMARY] = self._attr_value[ATTR_TITLE_SUMMARY] + " " + feed['status']['titleSummary']['summary']['text']
-                                self._attr_value[ATTR_SUBTITLE_SUMMARY] = self._attr_value[ATTR_SUBTITLE_SUMMARY] + " " + feed['status']['subtitleSummary']['summary']['text']
-                            if feed['type'] == 'courier':
-                                self._attr_value[ATTR_COURIER_DESCRIPTION] = self._attr_value[ATTR_COURIER_DESCRIPTION] + " " + feed['courier'][0]['title']
+                        if index == 0:
+                            for feed in order.get("feedCards", []):
+                                if feed['type'] == 'status':
+                                    self._attr_value[ATTR_ETA] = feed['status']['title']
+                                    self._attr_value[ATTR_TITLE_SUMMARY] = feed['status']['titleSummary']['summary']['text']
+                                    self._attr_value[ATTR_SUBTITLE_SUMMARY] = feed['status']['subtitleSummary']['summary']['text']
+                                if feed['type'] == 'courier':
+                                    self._attr_value[ATTR_COURIER_DESCRIPTION] = feed['courier'][0]['title']
 
-                    self._attr_value[ATTR_RESTAURANT_NAME] = self._attr_value[ATTR_RESTAURANT_NAME] + " " + order['activeOrderOverview']['title']
-                    for contact in order.get("contacts", []):
-                        if contact['type'] == 'COURIER':
-                            self._attr_value[ATTR_COURIER_NAME] = self._attr_value[ATTR_COURIER_NAME] + " " + contact['title']
-                            self._attr_value[ATTR_COURIER_PHONE] = self._attr_value[ATTR_COURIER_PHONE] + " " + contact['phoneNumber']
-                    for bgfeedcard in order.get("backgroundFeedCards", []):
-                        self._attr_value[ATTR_LATITUDE] = self._attr_value[ATTR_LATITUDE] + " " + str(bgfeedcard['mapEntity'][0]['latitude'])
-                        self._attr_value[ATTR_LONGITUDE] = self._attr_value[ATTR_LONGITUDE] + " " + str(bgfeedcard['mapEntity'][0]['longitude'])
-        except:
+                            self._attr_value[ATTR_RESTAURANT_NAME] = order['activeOrderOverview']['title']
+                            for contact in order.get("contacts", []):
+                                if contact['type'] == 'COURIER':
+                                    self._attr_value[ATTR_COURIER_NAME] = contact['title']
+                                    self._attr_value[ATTR_COURIER_PHONE] = contact['phoneNumber']
+                            for bgfeedcard in order.get("backgroundFeedCards", []):
+                                self._attr_value[ATTR_LATITUDE] = str(bgfeedcard['mapEntity'][0]['latitude'])
+                                self._attr_value[ATTR_LONGITUDE] = str(bgfeedcard['mapEntity'][0]['longitude'])
+                        if index >= 1:
+                            for feed in order.get("feedCards", []):
+                                if feed['type'] == 'status':
+                                    self._attr_value[f"{ATTR_ETA}_{index + 1}"] = feed['status']['title']
+                                    self._attr_value[f"{ATTR_TITLE_SUMMARY}_{index + 1}"] = feed['status']['titleSummary']['summary']['text']
+                                    self._attr_value[f"{ATTR_SUBTITLE_SUMMARY}_{index + 1}"] = feed['status']['subtitleSummary']['summary']['text']
+                                if feed['type'] == 'courier':
+                                    self._attr_value[f"{ATTR_COURIER_DESCRIPTION}_{index + 1}"] = feed['courier'][0]['title']
+
+                            self._attr_value[f"{ATTR_RESTAURANT_NAME}_{index + 1}"] = order['activeOrderOverview']['title']
+                            for contact in order.get("contacts", []):
+                                if contact['type'] == 'COURIER':
+                                    self._attr_value[f"{ATTR_COURIER_NAME}_{index + 1}"] = contact['title']
+                                    self._attr_value[f"{ATTR_COURIER_PHONE}_{index + 1}"] = contact['phoneNumber']
+                            for bgfeedcard in order.get("backgroundFeedCards", []):
+                                self._attr_value[f"{ATTR_LATITUDE}_{index + 1}"] = str(bgfeedcard['mapEntity'][0]['latitude'])
+                                self._attr_value[f"{ATTR_LONGITUDE}_{index + 1}"] = str(bgfeedcard['mapEntity'][0]['longitude'])
+                        index = index + 1
+
+
+        except Exception as e:
+            _LOGGER.error(f"paring orders occured exception {e}")
             self._state = 0
 
         self._attr_value[ATTR_HTTPS_RESULT] = self._data.orders[self._account].get(

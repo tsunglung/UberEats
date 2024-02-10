@@ -30,7 +30,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     """Set up a Uber Eats entry."""
 
     account = _get_config_value(config_entry, CONF_ACCOUNT, "")
-    cookie = _get_config_value(config_entry, CONF_COOKIE, "")
+    cookie1 = _get_config_value(config_entry, CONF_COOKIE, "")
+    cookie2 = _get_config_value(config_entry, f"{CONF_COOKIE}2", "")
     localcode = _get_config_value(config_entry, CONF_LOCALCODE, DEFAULT_LOCALCODE)
 
     # migrate data (also after first setup) to options
@@ -39,10 +40,11 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
                                                options=config_entry.data)
 
     session = async_get_clientsession(hass)
+    cookies = [cookie1, cookie2]
 
-    uber_eats_data = UberEatsData(hass, session, account, cookie, localcode)
+    uber_eats_data = UberEatsData(hass, session, account, cookies, localcode)
 
-    anws_aoaws_coordinator = DataUpdateCoordinator(
+    uber_eats_coordinator = DataUpdateCoordinator(
         hass,
         _LOGGER,
         name=f"Uber Eats for {account}",
@@ -50,17 +52,17 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         update_interval=DEFAULT_SCAN_INTERVAL,
     )
 
-    anws_aoaws_hass_data = hass.data.setdefault(DOMAIN, {})
-    anws_aoaws_hass_data[config_entry.entry_id] = {
+    uber_eats_hass_data = hass.data.setdefault(DOMAIN, {})
+    uber_eats_hass_data[config_entry.entry_id] = {
         UBER_EATS_DATA: uber_eats_data,
-        UBER_EATS_COORDINATOR: anws_aoaws_coordinator,
+        UBER_EATS_COORDINATOR: uber_eats_coordinator,
         UBER_EATS_NAME: account,
     }
     uber_eats_data.expired = False
     uber_eats_data.ordered = True
 
     # Fetch initial data so we have data when entities subscribe
-    await anws_aoaws_coordinator.async_refresh()
+    await uber_eats_coordinator.async_refresh()
     if uber_eats_data.account is None:
         raise ConfigEntryNotReady()
 

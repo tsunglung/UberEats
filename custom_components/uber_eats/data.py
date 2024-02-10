@@ -21,12 +21,14 @@ _LOGGER = logging.getLogger(__name__)
 class UberEatsData():
     """Class for handling the data retrieval."""
 
-    def __init__(self, hass, session, account, cookie, localcode):
+    def __init__(self, hass, session, account, cookies, localcode):
         """Initialize the data object."""
         self._hass = hass
         self._session = session
         self._account = account
-        self._cookie = cookie
+        self._cookie = None
+        self._cookie1 = cookies[0]
+        self._cookie2 = cookies[1]
         self._localcode = localcode
         self.orders = {}
         self.account = None
@@ -47,6 +49,9 @@ class UberEatsData():
 
     async def async_update_data(self):
         """Get the latest data for Uber Eats from REST service."""
+        if self._cookie is None:
+            self._cookie = self._cookie1
+
         headers = {
             USER_AGENT: HA_USER_AGENT,
             "content-type": "application/json",
@@ -110,7 +115,7 @@ class UberEatsData():
                 if response.status == HTTPStatus.FORBIDDEN:
                     info = " Token or Cookie is expired"
                 _LOGGER.error(
-                    "Failed fetching data for %s (HTTP Status = %d).%s",
+                    "Failed fetching data for %s (HTTP Status Code = %d).%s",
                     self._account,
                     response.status,
                     info
@@ -122,5 +127,10 @@ class UberEatsData():
                 "Failed fetching data for %s (Sessions expired)",
                 self._account,
             )
+            if self._cookie == self._cookie1:
+                self._cookie = self._cookie2 if len(self._cookie2) >= 1 else self._cookie1
+            else:
+                self._cookie = self._cookie1
+            self.expired = False
 
         return self

@@ -12,7 +12,8 @@
             "user": {
                 "data": {
                     "account": "Account",
-                    "cookie": "Cookie",
+                    "cookie": "Cookie1",
+                    "cookie2": "Cookie2",
                     "localcode": "Local Code"
                 },
                 "description": "Please enter connection settings of your Uber Eats."
@@ -24,7 +25,8 @@
             "init": {
                 "title": "Uber Eats",
                 "data": {
-                    "cookie": "Cookie",
+                    "cookie": "Cookie1",
+                    "cookie2": "Cookie2",
                     "localcode": "Local Code"
                 }
             }

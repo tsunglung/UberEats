@@ -34,11 +34,13 @@ async def validate_input(hass: core.HomeAssistant, data):
     """
 
     account = data[CONF_ACCOUNT]
-    cookie = data[CONF_COOKIE]
+    cookie1 = data[CONF_COOKIE]
+    cookie2 = data[f"{CONF_COOKIE}2"]
     localcode = data[CONF_LOCALCODE]
     session = async_get_clientsession(hass)
+    cookies = [cookie1, cookie2]
 
-    uber_eats_data = UberEatsData(hass, session, account, cookie, localcode)
+    uber_eats_data = UberEatsData(hass, session, account, cookies, localcode)
     uber_eats_data.expired = False
     uber_eats_data.ordered = True
     await uber_eats_data.async_update_data()
@@ -94,6 +96,7 @@ class UberEatsFlowHandler(ConfigFlow, domain=DOMAIN):
             {
                 vol.Required(CONF_ACCOUNT): str,
                 vol.Required(CONF_COOKIE): str,
+                vol.Required(f"{CONF_COOKIE}2"): str,
                 vol.Required(CONF_LOCALCODE, default=DEFAULT_LOCALCODE): vol.In(
                     list(LOCALCODES.keys())
                 ),
@@ -148,14 +151,16 @@ class OptionsFlowHandler(OptionsFlow):
                 )
 
         self._account = self.config_entry.options.get(CONF_ACCOUNT, '')
-        self._cookie = self.config_entry.options.get(CONF_COOKIE, '')
+        self._cookie1 = self.config_entry.options.get(CONF_COOKIE, '')
+        self._cookie2 = self.config_entry.options.get(f"{CONF_COOKIE}2", '')
         self._localcode = self.config_entry.options.get(CONF_LOCALCODE, '')
 
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_COOKIE, default=self._cookie): str,
+                    vol.Required(CONF_COOKIE, default=self._cookie1): str,
+                    vol.Required(f"{CONF_COOKIE}2", default=self._cookie2): str,
                     vol.Required(CONF_LOCALCODE, default=self._localcode): vol.In(
                         list(LOCALCODES.keys())
                     )
