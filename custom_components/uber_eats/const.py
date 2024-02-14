@@ -3,7 +3,7 @@ from datetime import timedelta
 
 DEFAULT_NAME = "Uber Eats"
 DOMAIN = "uber_eats"
-PLATFORMS = [ "binary_sensor", "button", "image", "sensor" ]
+PLATFORMS = [ "binary_sensor", "button", "device_tracker", "image", "sensor" ]
 DATA_KEY = "data_uber_eats"
 
 ATTR_ETA = "eta"
