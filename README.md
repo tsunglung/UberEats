@@ -16,7 +16,7 @@ Then restart HA.
 
 # Setup
 
-You need to grab one cookie. If your get problem with https_result is 500, you need to get new cookie. (Temporary Solution)
+You need to grab one cookie. If your get problem with https_result is 500, you need to get new cookie. (Temporary Solution, the cookie will be expirated after one month)
 
 **1. Basic steps for grabbing**
 

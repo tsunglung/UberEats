@@ -16,7 +16,7 @@ Home assistant for Uber Eats
 
 # 前置作業
 
-你必須取得 Cookie 令牌. 如果你遇到 http_result 500 的問題，你必須要重新取得令牌。
+你必須取得 Cookie 令牌. 如果你遇到 http_result 500 的問題，你必須要重新取得令牌。(暫時，cookie 有一個月效期，所以，一個月後要手動更新 cookie)
 
 **1. 取得步驟**
 
