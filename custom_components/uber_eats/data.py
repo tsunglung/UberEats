@@ -65,6 +65,10 @@ class UberEatsData():
         params = {
            "localCode": self._localcode
         }
+        cookies = {
+            "sid": f"{self._cookie}",
+            "marketing_vistor_id": "8a8a7080-2a23-4ca3-8fd4-bba1a19bd035"
+        }
         force_update = False
         now = datetime.now()
 
@@ -80,6 +84,7 @@ class UberEatsData():
                     data=json.dumps(payload),
                     params=params,
                     headers=headers,
+                    cookies=cookies,
                     timeout=REQUEST_TIMEOUT
                 )
 
