@@ -97,8 +97,8 @@ class UberEatsTrackerEntity(TrackerEntity):
                 self._state = len(orders)
                 index = 0
                 if len(orders) >= 1:
-                    self._attr_latitude = orders[0]['backgroundFeedCards']['mapEntity'][0]['latitude']
-                    self._attr_longitude = orders[0]['backgroundFeedCards']['mapEntity'][0]['longitude']
+                    self._attr_latitude = orders[0]['backgroundFeedCards'][0]['mapEntity']['latitude']
+                    self._attr_longitude = orders[0]['backgroundFeedCards'][0]['mapEntity']['longitude']
 
         except Exception as e:
             _LOGGER.error(f"paring orders occured exception {e}")
