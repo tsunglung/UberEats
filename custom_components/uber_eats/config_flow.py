@@ -10,7 +10,7 @@ from homeassistant.config_entries import (
     OptionsFlow,
     ConfigEntry
     )
-from homeassistant.const import CONF_NAME
+from homeassistant.const import CONF_NAME, MAJOR_VERSION, MINOR_VERSION
 from homeassistant.core import callback
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -130,7 +130,8 @@ class OptionsFlowHandler(OptionsFlow):
 
     def __init__(self, config_entry):
         """Initialize options flow."""
-        self.config_entry = config_entry
+        if (MAJOR_VERSION, MINOR_VERSION) < (2024, 11):
+            self.config_entry = config_entry
 
     async def async_step_init(self, user_input=None):
         """Manage the options."""
